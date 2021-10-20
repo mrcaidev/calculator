@@ -25,11 +25,12 @@ go run ip:port
 ```bash
 go build -ldflags "-s -w"
 ```
-编译出独立的可执行文件，双击运行。同时在浏览器中打开 http://localhost:1234 查看效果。
+编译出独立的可执行文件，传入参数`ip:port`运行。
+同时，在浏览器中打开 http://ip:port 查看效果。
 ### 2. 一键启动
 运行`run.bat`，自动打开服务器和网页。
 ### 3. 分步启动
-  - 在根目录下执行`go run main.go`
+  - 在根目录下执行`go run main.go 127.0.0.1:1234`
   - 在浏览器中打开 http://localhost:1234
 
 ## 注意事项
