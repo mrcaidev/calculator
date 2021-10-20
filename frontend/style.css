@@ -55,6 +55,7 @@ body {
     font-size: 20px;
     margin-top: 50px;
     user-select: text;
+    transition: .2s;
 }
 
 .down-screen {
@@ -70,6 +71,7 @@ body {
     font-size: 32px;
     margin-top: 20px;
     user-select: text;
+    transition: .2s;
 }
 
 .keyboard {
@@ -87,7 +89,7 @@ button {
     border-radius: 6px;
     font-size: 20px;
     cursor: pointer;
-    transition: .1s;
+    opacity: .8;
 }
 
 .number {
