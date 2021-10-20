@@ -1,0 +1,180 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+
+body {
+    height: 100vh;
+    background-image: url('images/violin.png');
+    background-size: cover;
+}
+
+.container {
+    width: 400px;
+    height: 600px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(32, 32, 32, .9);
+    border-radius: 10px;
+    user-select: none;
+    overflow: hidden;
+    box-shadow: 5px 5px 5px rgba(32, 32, 32, .9);
+}
+
+.input-screen {
+    margin-top: 40px;
+    height: 80px;
+}
+
+.input-screen::before {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    content: '计算器';
+    color: white;
+    font-size: 20px;
+}
+
+.input-screen::after {
+    position: absolute;
+    top: 60px;
+    left: 5%;
+    width: 90%;
+    height: 1px;
+    background-color: rgba(255, 255, 255, .3);
+    content: '';
+}
+
+.input-screen span {
+    position: absolute;
+    color: rgba(255, 255, 255, .6);
+    line-height: 30px;
+    right: 10%;
+    font-size: 20px;
+    margin-top: 50px;
+    user-select: text;
+}
+
+.output-screen {
+    height: 80px;
+    line-height: 80px;
+}
+
+.output-screen span {
+    position: absolute;
+    color: white;
+    line-height: 40px;
+    right: 10%;
+    font-size: 32px;
+    margin-top: 20px;
+    user-select: text;
+}
+
+.keyboard {
+    height: 400px;
+    padding: 5px;
+    text-align: center;
+}
+
+button {
+    width: 72px;
+    height: 60px;
+    margin: 2px 0;
+    color: white;
+    border: 0;
+    border-radius: 6px;
+    font-size: 20px;
+    cursor: pointer;
+    transition: .1s;
+}
+
+.number {
+    background-color: rgb(59, 59, 59);
+}
+
+.number:hover {
+    background-color: rgb(50, 50, 50);
+}
+
+.number:active {
+    background-color: rgb(38, 40, 45);
+}
+
+.operator {
+    background-color: rgb(50, 50, 50);
+}
+
+.operator:hover {
+    background-color: rgb(59, 59, 59);
+}
+
+.operator:active {
+    background-color: rgb(50, 50, 50);
+}
+
+#equal {
+    background-color: rgb(158, 200, 210);
+    color: black;
+}
+
+#equal:hover {
+    background-color: rgb(145, 183, 193);
+}
+
+#equal:active {
+    background-color: rgb(132, 166, 175);
+}
+
+#statement {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    font-size: 20px;
+    font-family: 'Segoe Print', 'Microsoft YaHei UI', Consolas;
+    color: white;
+    cursor: default;
+}
+
+.github-corner {
+    fill:rgb(68, 69, 71);
+    color:#fff;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 0;
+    transform: scale(-1, 1);
+}
+
+.github-corner:hover .octo-arm {
+                animation: octocat-wave 560ms ease-in-out
+            }
+
+            @keyframes octocat-wave {
+
+                0%,
+                100% {
+                    transform: rotate(0)
+                }
+
+                20%,
+                60% {
+                    transform: rotate(-25deg)
+                }
+
+                40%,
+                80% {
+                    transform: rotate(10deg)
+                }
+            }
+
+            @media (max-width:500px) {
+                .github-corner:hover .octo-arm {
+                    animation: none
+                }
+
+                .github-corner .octo-arm {
+                    animation: octocat-wave 560ms ease-in-out
+                }
+            }
