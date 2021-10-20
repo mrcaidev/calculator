@@ -5,17 +5,17 @@ const buttons = document.querySelectorAll('button'),
     down = document.querySelector('.down-screen>span'),
     up = document.querySelector('.up-screen>span')
 
-let sock = null
+let socket = null
 const server = 'ws://127.0.0.1:1234/calculator'
 window.onload = () => {
-    sock = new WebSocket(server)
-    sock.onopen = () => {
+    socket = new WebSocket(server)
+    socket.onopen = () => {
         console.log('Connection success: ' + server)
     }
-    sock.onclose = e => {
+    socket.onclose = e => {
         console.log('Connection closed: ' + e.code)
     }
-    sock.onmessage = e => {
+    socket.onmessage = e => {
         console.log('Received message: ' + e.data)
         down.textContent = e.data
     }
@@ -30,7 +30,7 @@ const downToUp = () => {
     if (up.textContent == '0') {
         up.textContent = ''
     }
-    if ((/^0[+\-×÷]/).test(down.textContent)) {
+    if ((/^0[+\-×÷]/).test(down.textContent) && up.textContent != '') {
         down.textContent = down.textContent.slice(1)
     }
     up.textContent += down.textContent
@@ -39,15 +39,15 @@ const downToUp = () => {
 
 /**
  * @description Examine the validity of up-screen expression.
- * @param {String} str The expression to be examined.
+ * @param {String} exp The expression to be examined.
  * @returns true if valid, false if invalid.
  */
-const isValid = str => {
-    if (str.match(/\d/g) === null) {
+const isValid = exp => {
+    if (exp.match(/\d/g) === null) {
         return false
     }
-    let left = str.match(/\(/g)
-    let right = str.match(/\)/g)
+    let left = exp.match(/\(/g)
+    let right = exp.match(/\)/g)
     if (left === null) {
         if (right === null) {
             return true
@@ -153,7 +153,7 @@ buttons.forEach(button => {
                 return
             }
             console.log(text)
-            sock.send(text)
+            socket.send(text)
         } else {
             if (down.textContent.replace('-', '') == '0') {
                 down.textContent = down.textContent.replace('0', '')
