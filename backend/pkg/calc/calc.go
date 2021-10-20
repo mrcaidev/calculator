@@ -10,9 +10,14 @@ import (
 	"strings"
 )
 
-// Check if a character is a valid number or dot.
+// Check if a string is a valid number or dot.
 func isValidNumber(s string) bool {
-	return s >= "0" && s <= "9" || s == "."
+	for _, char := range s {
+		if (char < '0' || char > '9') && char != '.' {
+			return false
+		}
+	}
+	return true
 }
 
 // Check if a character is a valid operator. (self-defined operators included)
