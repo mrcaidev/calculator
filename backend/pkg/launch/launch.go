@@ -1,14 +1,15 @@
-// @Title: backend
+// @Title: launch
 // @Description: launch the calculator backend in debug or server mode.
-// @Author: Yuwang Cai, Fumiama
-package backend
+// @Author: Yuwang Cai
+package launch
 
 import (
+	"backend/pkg/calc"
 	"fmt"
+	"log"
+	"net/http"
 
 	"golang.org/x/net/websocket"
-
-	"github.com/MrCaiDev/GoCalculator/backend/calc"
 )
 
 // Debug mode. I/O at terminal.
@@ -23,8 +24,8 @@ func Debug() {
 	}
 }
 
-// CalcHandler Handle the calculation sent from frontend.
-func CalcHandler(sock *websocket.Conn) {
+// Handle the calculation sent from frontend.
+func calcHandler(sock *websocket.Conn) {
 	var (
 		err        error
 		expression string
@@ -43,5 +44,16 @@ func CalcHandler(sock *websocket.Conn) {
 			fmt.Printf("Send() error: %s\n", err.Error())
 			break
 		}
+	}
+}
+
+// Server mode. Launch at localhost:1234.
+func Server() {
+	http.Handle("/", http.FileServer(http.Dir("..")))
+	http.Handle("/calculator", websocket.Handler(calcHandler))
+	fmt.Println("Server started.")
+	err := http.ListenAndServe(":1234", nil)
+	if err != nil {
+		log.Fatal("ListenAndServe() error: ", err.Error())
 	}
 }

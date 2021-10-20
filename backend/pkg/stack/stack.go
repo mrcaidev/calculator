@@ -1,65 +1,65 @@
 // @Title: stack
 // @Description: Implementation of stack with linked list.
-// @Author: Yuwang Cai, Fumiama
+// @Author: Yuwang Cai
 package stack
 
 import (
 	"fmt"
 	"strconv"
-	"sync"
 )
+
+// Node in linked list.
+type node struct {
+	value interface{}
+	next  *node
+}
 
 // Struct stack.
 type Stack struct {
-	data *[]interface{}
-	p    uint
-	mu   sync.RWMutex
+	top   *node
+	depth int
 }
 
 // Create an empty stack.
 func CreateStack() *Stack {
 	return &Stack{
-		data: new([]interface{}),
-		p:    0,
+		top:   nil,
+		depth: 0,
 	}
 }
 
 // Get top element value.
 func (s *Stack) Top() interface{} {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	if s.p == 0 {
+	if s.depth == 0 {
 		return nil
 	}
-	return (*s.data)[s.p-1]
+	return s.top.value
 }
 
 // Get stack depth.
-func (s *Stack) Depth() uint {
-	s.mu.RLock()
-	p := s.p
-	s.mu.RUnlock()
-	return p
+func (s *Stack) Depth() int {
+	return s.depth
 }
 
 // Push new element into stack.
 func (s *Stack) Push(value interface{}) {
-	s.mu.Lock()
-	*s.data = append(*s.data, value)
-	s.p++
-	s.mu.Unlock()
+	node := &node{
+		value: value,
+		next:  s.top,
+	}
+	s.top = node
+	s.depth++
 }
 
 // Pop out the top element.
 func (s *Stack) Pop() interface{} {
-	top := s.Top()
-	if top != nil {
-		s.mu.Lock()
-		s.p--
-		*s.data = (*s.data)[:s.p]
-		s.mu.Unlock()
+	if s.depth == 0 {
+		return nil
 	}
-	return top
+	ret := s.top.value
+	s.top = s.top.next
+	s.depth--
+	return ret
 }
 
 // Pop out the top element as float64.
