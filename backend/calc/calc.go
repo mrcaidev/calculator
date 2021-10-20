@@ -1,13 +1,14 @@
 // @Title: calc
 // @Description: Necessary functions for the web calculator.
-// @Author: Yuwang Cai
+// @Author: Yuwang Cai, Fumiama
 package calc
 
 import (
-	"backend/pkg/stack"
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/MrCaiDev/GoCalculator/backend/stack"
 )
 
 // Check if a string is a valid number or dot.
