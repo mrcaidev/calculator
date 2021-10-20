@@ -1,24 +1,12 @@
 /* eslint-disable max-lines-per-function */
 /* eslint-disable max-statements */
 /* eslint-disable complexity */
-let buttons = document.querySelectorAll('button'),
-    down = document.querySelector('.output-screen>span'),
-    equalPressed = false,
-    up = document.querySelector('.input-screen>span')
-
-const outputToInput = () => {
-    if (up.textContent == '0') {
-        up.textContent = ''
-    }
-    if ((/^0[+\-×÷]/).test(down.textContent)) {
-        down.textContent = down.textContent.slice(1)
-    }
-    up.textContent += down.textContent
-    down.textContent = '0'
-}
+const buttons = document.querySelectorAll('button'),
+    down = document.querySelector('.down-screen>span'),
+    up = document.querySelector('.up-screen>span')
 
 let sock = null
-let server = 'ws://127.0.0.1:1234/calculator'
+const server = 'ws://127.0.0.1:1234/calculator'
 window.onload = () => {
     sock = new WebSocket(server)
     sock.onopen = () => {
@@ -33,6 +21,27 @@ window.onload = () => {
     }
 }
 
+let equalPressed = false
+
+/**
+ * @description Replace content of up-screen with down-screen.
+ */
+const downToUp = () => {
+    if (up.textContent == '0') {
+        up.textContent = ''
+    }
+    if ((/^0[+\-×÷]/).test(down.textContent)) {
+        down.textContent = down.textContent.slice(1)
+    }
+    up.textContent += down.textContent
+    down.textContent = '0'
+}
+
+/**
+ * @description Examine the validity of up-screen expression.
+ * @param {String} str The expression to be examined.
+ * @returns true if valid, false if invalid.
+ */
 const isValid = str => {
     if (str.match(/\d/g) === null) {
         return false
@@ -53,6 +62,10 @@ const isValid = str => {
     return false
 }
 
+/*
+ * Add event listener for every button.
+ * This piece of code is shit but it works anyway.
+ */
 buttons.forEach(button => {
     button.addEventListener('click', e => {
         let { target } = e
@@ -66,7 +79,7 @@ buttons.forEach(button => {
             equalPressed = false
             up.textContent = ''
             if ('+-×÷'.includes(curText)) {
-                outputToInput()
+                downToUp()
             } else {
                 down.textContent = '0'
                 up.textContent = '0'
@@ -89,7 +102,7 @@ buttons.forEach(button => {
                 up.textContent = up.textContent.slice(0, -1) + curText
             } else {
                 down.textContent += curText
-                outputToInput()
+                downToUp()
             }
         } else if (curText == '+/-') {
             if (down.textContent.startsWith('-')) {
@@ -97,6 +110,17 @@ buttons.forEach(button => {
             } else {
                 down.textContent = '-' + down.textContent
             }
+        } else if (curText == '1/x') {
+            down.textContent += '^(-1)'
+        } else if (curText == 'x²') {
+            down.textContent += '²'
+        } else if (curText == '√x') {
+            if (down.textContent == '0') {
+                down.textContent = ''
+            }
+            down.textContent += '√'
+        } else if (curText == 'n!') {
+            down.textContent += '!'
         } else if (curText == '=') {
             let dotSet = down.textContent.
                 replace(/π/g, Math.PI).
@@ -106,7 +130,7 @@ buttons.forEach(button => {
                 down.textContent = 'Error'
                 return
             }
-            outputToInput()
+            downToUp()
             equalPressed = true
             let text = up.textContent
             text = text.
@@ -130,17 +154,6 @@ buttons.forEach(button => {
             }
             console.log(text)
             sock.send(text)
-        } else if (curText == '1/x') {
-            down.textContent += '^(-1)'
-        } else if (curText == 'x²') {
-            down.textContent += '²'
-        } else if (curText == '√x') {
-            if (down.textContent == '0') {
-                down.textContent = ''
-            }
-            down.textContent += '√'
-        } else if (curText == 'n!') {
-            down.textContent += '!'
         } else {
             if (down.textContent.replace('-', '') == '0') {
                 down.textContent = down.textContent.replace('0', '')
