@@ -1,26 +1,21 @@
-// @Title: stack
-// @Description: Implementation of stack with linked list.
-// @Author: Yuwang Cai
+// @Title		stack
+// @Description	链栈实现。
+// @Author		蔡与望
 package stack
 
-import (
-	"fmt"
-	"strconv"
-)
-
-// Node in linked list.
+// 链栈结点。
 type node struct {
 	value interface{}
 	next  *node
 }
 
-// Struct stack.
+// 链栈结构。
 type Stack struct {
 	top   *node
 	depth int
 }
 
-// Create an empty stack.
+// 创建链栈。
 func CreateStack() *Stack {
 	return &Stack{
 		top:   nil,
@@ -28,7 +23,7 @@ func CreateStack() *Stack {
 	}
 }
 
-// Get top element value.
+// 获取栈顶元素值。
 func (s *Stack) Top() interface{} {
 	if s.depth == 0 {
 		return nil
@@ -36,12 +31,12 @@ func (s *Stack) Top() interface{} {
 	return s.top.value
 }
 
-// Get stack depth.
+// 获取栈深。
 func (s *Stack) Depth() int {
 	return s.depth
 }
 
-// Push new element into stack.
+// 压栈。
 func (s *Stack) Push(value interface{}) {
 	node := &node{
 		value: value,
@@ -51,7 +46,7 @@ func (s *Stack) Push(value interface{}) {
 	s.depth++
 }
 
-// Pop out the top element.
+// 弹栈。
 func (s *Stack) Pop() interface{} {
 	if s.depth == 0 {
 		return nil
@@ -60,21 +55,4 @@ func (s *Stack) Pop() interface{} {
 	s.top = s.top.next
 	s.depth--
 	return ret
-}
-
-// Pop out the top element as float64.
-func (s *Stack) PopAsDouble() float64 {
-	top := s.Pop()
-	switch top := top.(type) {
-	case float64:
-		return top
-	case string:
-		topDouble, err := strconv.ParseFloat(top, 64)
-		if err != nil {
-			panic(err.Error())
-		}
-		return topDouble
-	default:
-		panic(fmt.Sprintf("popDouble() error: Invalid type %T", top))
-	}
 }
