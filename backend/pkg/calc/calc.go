@@ -1,14 +1,31 @@
-// @Title: calc
-// @Description: Necessary functions for the web calculator.
-// @Author: Yuwang Cai
+// @Title		calc
+// @Description	计算器组件。
+// @Author		蔡与望
 package calc
 
 import (
 	"backend/pkg/stack"
+	"fmt"
 	"math"
 	"strconv"
 	"strings"
 )
+
+// Pop out the top element as float64.
+func asFloat(value interface{}) float64 {
+	switch value := value.(type) {
+	case float64:
+		return value
+	case string:
+		topDouble, err := strconv.ParseFloat(value, 64)
+		if err != nil {
+			panic(err.Error())
+		}
+		return topDouble
+	default:
+		panic(fmt.Sprintf("popDouble() error: Invalid type %T", value))
+	}
+}
 
 // Check if a string is a valid number or dot.
 func isValidNumber(s string) bool {
@@ -192,46 +209,46 @@ func getAnswer(postfixArr []string) float64 {
 		res, top1, top2 := 0.0, 0.0, 0.0
 		switch curPart {
 		case "+":
-			top1 = stack.PopAsDouble()
-			top2 = stack.PopAsDouble()
+			top1 = asFloat(stack.Pop())
+			top2 = asFloat(stack.Pop())
 			res = top1 + top2
 		case "-":
-			top1 = stack.PopAsDouble()
-			top2 = stack.PopAsDouble()
+			top1 = asFloat(stack.Pop())
+			top2 = asFloat(stack.Pop())
 			res = top2 - top1
 		case "*":
-			top1 = stack.PopAsDouble()
-			top2 = stack.PopAsDouble()
+			top1 = asFloat(stack.Pop())
+			top2 = asFloat(stack.Pop())
 			res = top1 * top2
 		case "/":
-			top1 = stack.PopAsDouble()
-			top2 = stack.PopAsDouble()
+			top1 = asFloat(stack.Pop())
+			top2 = asFloat(stack.Pop())
 			res = top2 / top1
 		case "s":
-			top1 = stack.PopAsDouble()
+			top1 = asFloat(stack.Pop())
 			res = math.Sin(top1 * math.Pi / 180.0)
 		case "c":
-			top1 = stack.PopAsDouble()
+			top1 = asFloat(stack.Pop())
 			res = math.Cos(top1 * math.Pi / 180.0)
 		case "t":
-			top1 = stack.PopAsDouble()
+			top1 = asFloat(stack.Pop())
 			res = math.Tan(top1 * math.Pi / 180.0)
 		case "p":
-			top1 = stack.PopAsDouble()
+			top1 = asFloat(stack.Pop())
 			res = math.Pow(top1, 2)
 		case "r":
-			top1 = stack.PopAsDouble()
+			top1 = asFloat(stack.Pop())
 			res = math.Sqrt(top1)
 		case "u":
-			top1 = stack.PopAsDouble()
+			top1 = asFloat(stack.Pop())
 			res = 1 / top1
 		case "!":
-			top1 = stack.PopAsDouble()
+			top1 = asFloat(stack.Pop())
 			res = factorial(top1)
 		}
 		stack.Push(res)
 	}
-	return stack.PopAsDouble()
+	return asFloat(stack.Pop())
 }
 
 // Calculate the answer of an expression.
