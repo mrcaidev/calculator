@@ -7,48 +7,52 @@ import (
 	"backend/pkg/stack"
 	"fmt"
 	"math"
+	"regexp"
 	"strconv"
 	"strings"
 )
 
-// Pop out the top element as float64.
+// 将字符串或浮点数转换为浮点数。
 func asFloat(value interface{}) float64 {
 	switch value := value.(type) {
 	case float64:
 		return value
 	case string:
-		topDouble, err := strconv.ParseFloat(value, 64)
+		floatValue, err := strconv.ParseFloat(value, 64)
 		if err != nil {
-			panic(err.Error())
+			panic(fmt.Sprintf("strconv.ParseFloat() error: %s.\n", err.Error()))
 		}
-		return topDouble
+		return floatValue
 	default:
-		panic(fmt.Sprintf("popDouble() error: Invalid type %T", value))
+		panic(fmt.Sprintf("calc.asFloat() error: Invalid type %T.", value))
 	}
 }
 
-// Check if a string is a valid number or dot.
-func isValidNumber(s string) bool {
-	for _, char := range s {
-		if (char < '0' || char > '9') && char != '.' {
-			return false
-		}
+// 判断字符串内容是否为浮点数。
+func isNum(str string) bool {
+	res, err := regexp.MatchString("^[\\d\\.]+$", str)
+	if err != nil {
+		panic(fmt.Sprintf("regexp.MatchString() error: %s.\n", err.Error()))
 	}
-	return true
+	return res
 }
 
-// Check if a character is a valid operator. (self-defined operators included)
-func isValidOperator(s string) bool {
-	return strings.Contains("+-*/()sctpru!", s)
+// 判断字符内容是否为运算符。
+func isOp(str string) bool {
+	res, err := regexp.MatchString("^[\\+|\\-|\\*|/|\\(|\\)|s|c|t|p|r|u|!]$", str)
+	if err != nil {
+		panic(fmt.Sprintf("regexp.MatchString() error: %s.\n", err.Error()))
+	}
+	return res
 }
 
-// Judge the priority of operator.
+// 判断运算符优先级。
 func opLevel(op string) int {
 	switch op {
 	case "(", ")":
-		return 3
+		return 100
 	case "s", "c", "t", "p", "r", "u", "!":
-		return 2
+		return 10
 	case "*", "/":
 		return 1
 	default:
@@ -56,25 +60,27 @@ func opLevel(op string) int {
 	}
 }
 
-// Compare the priority of two operators.
-// Returns positive if a > b, negative if a < b, zero if a == b.
-func opCmp(a string, b string) int {
-	return opLevel(a) - opLevel(b)
+// 比较两运算符优先级。
+// a > b -> 正数
+// a < b -> 负数
+// a = b -> 0
+func opCmp(op1 string, op2 string) int {
+	return opLevel(op1) - opLevel(op2)
 }
 
-// Calculate the factorial of the floor of a float number.
-func factorial(x float64) float64 {
-	if x == 0 {
+// 计算浮点数的阶乘。
+func factorial(num float64) float64 {
+	if num < 2 {
 		return 1.0
 	}
-	ret := 1.0
-	for num := 1.0; num <= x; num++ {
-		ret *= num
+	product := 1.0
+	for iter := 2.0; iter <= num; iter++ {
+		product *= iter
 	}
-	return ret
+	return product
 }
 
-// Append a character to a slice, except parentheses.
+// 拼接字符串，除了括号。
 func appendPart(dst []string, src string) []string {
 	if src == "(" || src == ")" {
 		return dst
@@ -82,66 +88,31 @@ func appendPart(dst []string, src string) []string {
 	return append(dst, src)
 }
 
-// Change the position of "p", "u" and "!".
-func organize(exp string) string {
-	var (
-		targetIndex     int
-		leftBracketNum  int
-		rightBracketNum int
-	)
-	for index := 0; index < len(exp); index++ {
-		targetIndex = 0
-		leftBracketNum = 0
-		rightBracketNum = 0
-		newExpArr := make([]string, 0)
-		if exp[index] == 'p' || exp[index] == 'u' || exp[index] == '!' {
-			// Target the object to be operated on.
-			if exp[index-1] == ')' {
-				// Find corresponding left parenthesis.
-				for rev := index - 1; rev >= 0; rev-- {
-					if exp[rev] == ')' {
-						rightBracketNum++
-					} else if exp[rev] == '(' {
-						leftBracketNum++
-					}
-					if leftBracketNum == rightBracketNum {
-						targetIndex = rev
-						break
-					}
-				}
-			} else {
-				// Find out where the operated number starts.
-				for rev := index - 1; rev >= 0; rev-- {
-					if !isValidNumber(string(exp[rev])) {
-						targetIndex = rev + 1
-						break
-					}
-				}
-			}
-			// Rearrange the expression.
-			if targetIndex != 0 {
-				newExpArr = append(newExpArr, exp[:targetIndex])
-			}
-			newExpArr = append(newExpArr, string(exp[index]))
-			newExpArr = append(newExpArr, exp[targetIndex:index])
-			if index != len(exp)-1 {
-				newExpArr = append(newExpArr, exp[index+1:])
-			}
-			exp = strings.Join(newExpArr, "")
+// 找到与右括号平级的左括号。
+func findLeftParen(parts []string, curIndex int) int {
+	leftNum, rightNum := 0, 0
+	for rev := curIndex; rev >= 0; rev-- {
+		if parts[rev] == ")" {
+			rightNum++
+		} else if parts[rev] == "(" {
+			leftNum++
+		}
+		if leftNum == rightNum {
+			return rev
 		}
 	}
-	return exp
+	return -1
 }
 
-// Fragment sorted string into number parts and operator parts.
-func fragment(raw string) []string {
+// 将字符串分割为数字与运算符。
+func fragment(str string) []string {
 	parts := make([]string, 0)
 	var part strings.Builder
-	for _, charRune := range raw {
+	for _, charRune := range str {
 		char := string(charRune)
-		if isValidNumber(char) {
+		if isNum(char) {
 			part.WriteString(char)
-		} else if isValidOperator(char) {
+		} else if isOp(char) {
 			if part.Len() > 0 {
 				parts = append(parts, part.String())
 				part.Reset()
@@ -157,12 +128,28 @@ func fragment(raw string) []string {
 	return parts
 }
 
+// 调整特殊运算符位置。
+func adjustOp(parts []string) []string {
+	var targetIndex int
+	for index := 0; index < len(parts); index++ {
+		if parts[index] == "p" || parts[index] == "u" || parts[index] == "!" {
+			if parts[index-1] == ")" {
+				targetIndex = findLeftParen(parts, index-1)
+			} else {
+				targetIndex = index - 1
+			}
+			parts = append(parts[:targetIndex], append([]string{parts[index]}, parts[targetIndex:]...)...)[:len(parts)]
+		}
+	}
+	return parts
+}
+
 // Convert original infix expression to postfix expression.
 func toPostfix(infixArr []string) []string {
 	postfixArr := make([]string, 0)
 	opStack := stack.CreateStack()
 	for _, curPart := range infixArr {
-		if isValidNumber(curPart) {
+		if isNum(curPart) {
 			// Directly append.
 			postfixArr = appendPart(postfixArr, curPart)
 		} else if curPart == "(" || opStack.Depth() == 0 {
@@ -202,7 +189,7 @@ func toPostfix(infixArr []string) []string {
 func getAnswer(postfixArr []string) float64 {
 	stack := stack.CreateStack()
 	for _, curPart := range postfixArr {
-		if isValidNumber(curPart) {
+		if isNum(curPart) {
 			stack.Push(curPart)
 			continue
 		}
@@ -253,8 +240,8 @@ func getAnswer(postfixArr []string) float64 {
 
 // Calculate the answer of an expression.
 func Calculate(expression string) string {
-	rawExpression := organize(expression)
-	parts := fragment(rawExpression)
+	parts := fragment(expression)
+	parts = adjustOp(parts)
 	postfixArr := toPostfix(parts)
 	rawAnswer := getAnswer(postfixArr)
 	answer := strconv.FormatFloat(rawAnswer, 'f', -1, 32)
