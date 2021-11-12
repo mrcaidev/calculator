@@ -11,11 +11,14 @@ import (
 // 在终端启动。
 func Debug() {
 	fmt.Println("------------------------------")
-	var expression string
+	var (
+		app        calc.Calculator
+		expression string
+	)
 	for {
 		fmt.Print(">>> ")
 		fmt.Scanln(&expression)
-		answer := calc.Calculate(expression)
+		answer := app.Calculate(expression)
 		fmt.Printf("Answer: %s\n", answer)
 	}
 }

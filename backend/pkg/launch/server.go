@@ -15,6 +15,7 @@ import (
 // 处理`/calculator`页面发来的请求。
 func calcHandler(sock *websocket.Conn) {
 	var (
+		calc       calc.Calculator
 		err        error
 		expression string
 		answer     string
