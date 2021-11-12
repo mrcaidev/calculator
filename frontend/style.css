@@ -91,15 +91,15 @@ button {
     opacity: .8;
 }
 
-.number {
+.digit {
     background-color: rgb(59, 59, 59);
 }
 
-.number:hover {
+.digit:hover {
     background-color: rgb(50, 50, 50);
 }
 
-.number:active {
+.digit:active {
     background-color: rgb(38, 40, 45);
 }
 
