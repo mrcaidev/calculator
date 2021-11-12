@@ -7,5 +7,5 @@ import "backend/pkg/launch"
 
 // 程序入口。
 func main() {
-	launch.Debug()
+	launch.Server()
 }

@@ -22,7 +22,7 @@ func calcHandler(sock *websocket.Conn) {
 	)
 	for {
 		// 接收。
-		err = websocket.Message.Receive(sock, expression)
+		err = websocket.Message.Receive(sock, &expression)
 		if err != nil {
 			fmt.Printf("websocket.Message.Receive() error: %s.\n", err.Error())
 			break
