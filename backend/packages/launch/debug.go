@@ -4,7 +4,7 @@
 package launch
 
 import (
-	"backend/pkg/calc"
+	"backend/packages/calc"
 	"fmt"
 )
 
