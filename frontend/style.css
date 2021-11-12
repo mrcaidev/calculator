@@ -5,8 +5,7 @@
 
 body {
     height: 100vh;
-    background-image: url('images/violin.png');
-    background-size: cover;
+    background: linear-gradient(to right bottom, #fff, #000);
 }
 
 .container {
@@ -20,7 +19,7 @@ body {
     border-radius: 10px;
     user-select: none;
     overflow: hidden;
-    box-shadow: 5px 5px 5px rgba(32, 32, 32, .9);
+    box-shadow: 5px 5px 5px rgba(32, 32, 32, .7);
 }
 
 .up-screen {
@@ -140,7 +139,7 @@ button {
 }
 
 .github-corner {
-    fill:rgb(68, 69, 71);
+    fill: #000;
     color:#fff;
     position: absolute;
     top: 0;
@@ -150,33 +149,29 @@ button {
 }
 
 .github-corner:hover .octo-arm {
-                animation: octocat-wave 560ms ease-in-out
-            }
+    animation: octocat-wave 560ms ease-in-out
+}
 
-            @keyframes octocat-wave {
+@keyframes octocat-wave {
+    0%,
+    100% {
+        transform: rotate(0)
+    }
+    20%,
+    60% {
+        transform: rotate(-25deg)
+    }
+    40%,
+    80% {
+        transform: rotate(10deg)
+    }
+}
 
-                0%,
-                100% {
-                    transform: rotate(0)
-                }
-
-                20%,
-                60% {
-                    transform: rotate(-25deg)
-                }
-
-                40%,
-                80% {
-                    transform: rotate(10deg)
-                }
-            }
-
-            @media (max-width:500px) {
-                .github-corner:hover .octo-arm {
-                    animation: none
-                }
-
-                .github-corner .octo-arm {
-                    animation: octocat-wave 560ms ease-in-out
-                }
-            }
+@media (max-width:500px) {
+    .github-corner:hover .octo-arm {
+        animation: none
+    }
+    .github-corner .octo-arm {
+        animation: octocat-wave 560ms ease-in-out
+    }
+}
